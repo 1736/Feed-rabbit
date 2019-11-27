@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+       
+        body{
+            text-align:center;
+            font-weight:bolder;
+            text-shadow:5px 2px 4px #FFFFFF;
+            background:rgb(236, 217, 214);
+        }
+        h1{
+            font-family:微軟正黑體;
+            font-weight:bolder;
+            text-shadow:5px 2px 4px #FFFFFF;
+
+        }
+        .top{
+            width: 90px;
+            height:90px;
+            background: rgb(250, 43, 43);
+            border-radius:50%;
+            position:absolute;left:30%;top:20px;
+            padding:20px;
+            box-sizing:border-box;
+        }
+        #game{
+                width:550px;
+                height:550px;
+                border-radius:50%;
+                border:none;
+                
+                background-image:url(./sticker.png);
+                background-size:cover;
+                background-repeat:no-repeat;
+                background-position:center;
+                border-right:5px solid rgb(243, 113, 113);
+                border-bottom:5px solid rgb(243, 113, 113);
+                filter:drop-shadow(0px 1px 5px rgb(85, 84, 84));
+                cursor:url(./cursor.png)  50 50 ,auto;
+                overflow:hidden;
+                position:relative;top:100px;
+                margin:auto;
+              
+        }
+        #game img{
+                
+                height:150px;
+                position:absolute;      
+        }
+        #bg{
+            position:relative;top:120px;
+
+        }
+        input{
+            width:120px;
+            height:120px;
+            border-radius: 50%;
+            color:rgb(243, 113, 113);
+            border:none;
+            border-right:5px solid rgb(243, 113, 113);
+            border-bottom:5px solid rgb(243, 113, 113);
+            background:white;
+            position:relative;left:300px;top:-70px;
+            font-size:1.5em;
+            font-family:微軟正黑體;
+            font-weight:bolder;
+            filter:drop-shadow(0px 1px 5px rgb(85, 84, 84));
+        }
+    input:hover{
+        background:rgb(247, 78, 78);
+        color:white;
+        text-shadow:1px 0px 5px rgb(15, 0, 0);
+        font-size:1.6em;
+    }
+    .so{
+        width:150px;
+        height:80px;
+        border-radius: 10%;
+            color:rgb(243, 113, 113);
+            border-right:5px solid rgb(243, 113, 113);
+            border-bottom:5px solid rgb(243, 113, 113);
+            background:white;
+            position:absolute;left:500px;top:650px;
+            
+    }
+    .img{
+        position:absolute;top:455px;left:480px;
+        z-index:-2;
+    }
+    </style>
+</head>
+<body>
+    
+    <div class="top"><h1>好想兔</h1></div>
+    <div class="so">
+        <div>
+            <p> 分數: <span id="score">0</span> 分 </p>
+            <p> 剩餘: <span id="sec">30</span> 秒 </p>
+        </div>
+    </div>
+    <div class="img"><img src="./2.png" style="width:190px;height:205px;"alt=""></div>
+     
+    <div id="game"></div>
+    <div class="game"></div>
+
+    <div id="bg">
+        <input type="button" value="開始遊戲" id="start">
+    </div>
+
+    <script src="jquery-3.4.1.min.js"></script>
+
+<script>
+     $(function(){
+            //分數
+            let score = 0;
+        
+            //遊戲時間
+            let sec = 30;
+            
+            //遊戲倒數計時
+            let gametimer = 0;
+
+            //殭屍流水號
+            let zbid = 0;
+
+            //隨機
+            let rand = (num) =>{
+                return Math.round(Math.random()*num);
+            }
+            //移動殭屍
+            let movezb =(id) =>{
+                $(`#zb${id}`).animate({
+                    left:rand(100)+"%",
+                    top: rand(100)+"%"
+                },3000, function(){
+                    movezb(id);
+                })
+            }
+
+            //點開按鈕時
+            $("#start").on("click",function(){
+
+                //將按鈕停用
+                $(this).attr("disabled",true);
+
+                //重設時間及分數
+                sec = 30;
+                $("#sec").text(sec);
+                score = 0;
+                $("#score").text(score);
+
+                //開始倒數
+                gametimer = setInterval(()=>{
+                    //秒數減1，修改文字
+                    sec--;
+                    $("#sec").text(sec);
+
+                    //如果到0
+                        if(sec==0){
+                            clearInterval(gametimer);
+                            $(this).attr("disabled",false);
+                            setTimeout(()=>{
+                                alert(`時間到，你得到${score}分!`);
+                                $("#game img").remove();
+                            },100)
+                        }
+                        let num = rand(30);
+                        if(num > 0){
+                            $("#game").append(`<img src="./3.gif" id="zb${zbid}">`); //append插入新的html
+                            $(`#zb${zbid}`).css({
+                                left:rand(100)+"%",
+                                 top:rand(100)+"%"
+                            });
+                            movezb(zbid);
+                            zbid++;
+                        }
+                },1000)
+            })
+            $("#game").on("click", "img",function(){
+                $(this).attr("src","./blood.png");
+                $(this).stop();
+                $(this).css("pointer-events","none");
+                score++;
+                $("#score").text(score);
+                $(this).fadeOut(1000);
+            })
+     })
+</script>
+</body>
+</html>
