@@ -78,14 +78,14 @@
         font-size:1.6em;
     }
     .so{
-        width:150px;
-        height:80px;
+        width:300px;
+        height:150px;
         border-radius: 10%;
             color:rgb(243, 113, 113);
             border-right:5px solid rgb(243, 113, 113);
             border-bottom:5px solid rgb(243, 113, 113);
             background:white;
-            position:absolute;left:500px;top:650px;
+            position:absolute;left:420px;top:650px;
             
     }
     .img{
@@ -99,7 +99,8 @@
     <div class="top"><h1>好想兔</h1></div>
     <div class="so">
         <div>
-            <p> 分數: <span id="score">0</span> 分 </p>
+            <p> 目前分數: <span id="score">0</span> 分 </p>
+            <p> 最高分數: <span id="highNameText">沒有人</span> 的分數是 <span id="highScoreText">0</span><p>
             <p> 剩餘: <span id="sec">30</span> 秒 </p>
         </div>
     </div>
@@ -115,6 +116,16 @@
     <script src="jquery-3.4.1.min.js"></script>
 
 <script>
+        let high = { name: "", score: 0 };
+        let highNameText = document.getElementById("highNameText");
+        let highScoreText = document.getElementById("highScoreText");
+
+        let highStorage = window.localStorage.getItem("highscore");
+        if(highStorage != null){
+            high = JSON.parse(highStorage);
+            highNameText.innerText = high.name;
+            highScoreText.innerText = high.score;
+        }
      $(function(){
             //分數
             let score = 0;
@@ -167,6 +178,18 @@
                             setTimeout(()=>{
                                 alert(`時間到，你得到${score}分!`);
                                 $("#game img").remove();
+                                if(score > high.score){
+                    let playerName = prompt("恭喜你得到最高分，請輸入你的名字");
+                    high.name = playerName;
+                    highNameText.innerText = playerName;
+                    high.score = score;
+                    highScoreText.innerText = score;
+
+                    // window.localStorage.setItem 只能存文字
+                    // JSON.stringify 可以將 JSON 陣列轉成文字
+                    window.localStorage.setItem("highscore", JSON.stringify(high));
+                }
+
                             },100)
                         }
                         let num = rand(30);
